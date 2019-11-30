@@ -9,9 +9,9 @@ namespace BatchDownload
 {
     class App
     {
-        List<string> mUrlList;
-        string mReferer;
-        string mTargetDir;
+        readonly List<string> mUrlList;
+        readonly string mReferer;
+        readonly string mTargetDir;
 
         public App(List<string> urlList, string referer, string targetDir)
         {
@@ -22,7 +22,7 @@ namespace BatchDownload
             if (!Directory.Exists(targetDir))
                 Directory.CreateDirectory(targetDir);
             if (!Path.EndsInDirectorySeparator(targetDir))
-                mTargetDir = mTargetDir + Path.DirectorySeparatorChar;
+                mTargetDir = $"{mTargetDir}{Path.DirectorySeparatorChar}";
         }
 
         public async Task Run()
@@ -62,14 +62,14 @@ namespace BatchDownload
         public async Task DownloadFileAsync(string url)
         {
             var idx = url.LastIndexOf('/') + 1;
-            string fileName = mTargetDir + url.Substring(idx, url.Length - idx);
+            string fileName = mTargetDir + url[idx..];
 
             try
             {
-                await CreateWebClient().DownloadFileTaskAsync(url, fileName);
-
+                using var client = CreateWebClient();
+                await client.DownloadFileTaskAsync(url, fileName);
             }
-            catch (Exception ex)
+            catch (Exception ex) // TODO: fix CA1031
             {
                 Console.WriteLine(ex.Message);
             }

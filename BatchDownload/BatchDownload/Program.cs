@@ -72,6 +72,7 @@ namespace BatchDownload
             catch (Exception ex) // TODO: fix CA1031
             {
                 Console.WriteLine(ex.Message);
+                Console.WriteLine($"Failed to download: {url}");
             }
         }
     }

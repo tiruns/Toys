@@ -1,6 +1,6 @@
 # BatchDownload
 
-A tool for download batches of tiny files.
+A tool for downloading batches of tiny files.
 
     Usage:      .\BatchDownload.exe UrlList [Referer] [TargetDir=downloads]
     Examples:   .\BatchDownload.exe list.txt

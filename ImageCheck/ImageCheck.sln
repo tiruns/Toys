@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCheck", "ImageCheck\ImageCheck.csproj", "{1F310748-A3F7-4808-ABB3-41CA9575ED92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F310748-A3F7-4808-ABB3-41CA9575ED92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F310748-A3F7-4808-ABB3-41CA9575ED92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F310748-A3F7-4808-ABB3-41CA9575ED92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F310748-A3F7-4808-ABB3-41CA9575ED92}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6EDB1BC7-B3B6-48BB-85AE-86435497EEBD}
+	EndGlobalSection
+EndGlobal

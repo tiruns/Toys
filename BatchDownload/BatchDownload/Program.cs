@@ -59,7 +59,7 @@ namespace BatchDownload
             return client;
         }
 
-        public async Task DownloadFileAsync(string url)
+        public async Task DownloadFileAsync(string url, int retry = 0)
         {
             var idx = url.LastIndexOf('/') + 1;
             string fileName = mTargetDir + url[idx..];
@@ -71,8 +71,15 @@ namespace BatchDownload
             }
             catch (Exception ex) // TODO: fix CA1031
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine($"Failed to download: {url}");
+                if (retry < 2)
+                {
+                    await DownloadFileAsync(url, retry + 1);
+                }
+                else
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine($"Failed to download: {url}");
+                }
             }
         }
     }

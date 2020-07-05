@@ -8,19 +8,24 @@ class BinaryHeap
 public:
 	T& Top()
 	{
+		if (this->IsEmpty())
+			throw std::exception("BinaryHeap is empty.");
 		return mData[0];
 	}
 	void Pop()
 	{
+		if (this->IsEmpty())
+			throw std::exception("BinaryHeap is empty.");
 		mData.front() = mData.back();
 		mData.pop_back();
 		if (mData.size() != 0)
 			Update(0);
+		return;
 	}
 	void Insert(const T& value)
 	{
 		mData.push_back(value);
-		int p = mData.size() - 1;
+		auto p = mData.size() - 1;
 		while (p != 0)
 		{
 			if (Comp()(mData[p >> 1], mData[p]))
@@ -41,16 +46,20 @@ public:
 private:
 	void Update(size_t index)
 	{
-		int size = mData.size();
-		int m = index;
-		m = ((index << 1) < size && Comp()(mData[m], mData[index << 1])) ?
-			(m << 1) : m;
-		m = ((index << 1 | 1) < size && Comp()(mData[m], mData[index << 1 | 1])) ?
-			(m << 1 | 1) : m;
-		if (index != m)
+		if ((index << 1) >= index)
 		{
-			std::swap(mData[index], mData[m]);
-			Update(m);
+			auto size = mData.size();
+			auto m = index;
+			auto l = index << 1;
+			auto r = l | 1;
+
+			m = l < size && Comp()(mData[m], mData[l]) ? l : m;
+			m = r < size && Comp()(mData[m], mData[r]) ? r : m;
+			if (index != m)
+			{
+				std::swap(mData[index], mData[m]);
+				Update(m);
+			}
 		}
 	}
 	std::vector<T> mData;

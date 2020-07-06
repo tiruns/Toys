@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <random>
 #include <string>
+#include <chrono>
 
 #include <BinaryHeap.h>
 #include <Algorithms.h>
@@ -17,7 +18,7 @@ public:
 	vector<int> GenerateRandomNumbers(int num = 10, int min = -100, int max = 100)
 	{
 		vector<int> result;
-		auto randomDevice = mt19937();
+		auto randomDevice = mt19937(random_device()());
 		auto uniformDist = uniform_int_distribution<int>(min, max);
 		for (int i = 0; i < num; ++i)
 			result.push_back(uniformDist(randomDevice));
@@ -33,7 +34,7 @@ class BinaryHeapTest : public BasicTest
 public:
 	virtual string GetName() override
 	{
-		return "BinaryHeap";
+		return "BinaryHeapTest";
 	}
 
 	virtual bool Run() override
@@ -57,7 +58,6 @@ public:
 	}
 };
 
-
 class QuickSortTest : public BasicTest
 {
 public:
@@ -66,6 +66,14 @@ public:
 		return "QuickSortTest";
 	}
 	virtual bool Run() override
+	{
+		if (!this->FunctionTest())
+			return false;
+		this->PerformanceTest();
+		return true;
+	}
+private:
+	bool FunctionTest()
 	{
 		auto testCase = this->GenerateRandomNumbers();
 		auto dup = testCase;
@@ -83,6 +91,35 @@ public:
 
 		return true;
 	}
+	void PerformanceTest()
+	{
+		auto clock = chrono::high_resolution_clock();;
+		
+		vector<vector<int>> testSetA;
+		for (int i = 0; i < 100; ++i)
+			testSetA.push_back(this->GenerateRandomNumbers(25000, -10000, 10000));
+		for (int i = 40; i < 70; ++i)
+			for (int j = 0; j < testSetA[i].size(); ++j)
+				testSetA[i][j] += j * 10;
+		for (int i = 70; i < 100; ++i)
+			for (int j = 0; j < testSetA[i].size(); ++j)
+				testSetA[i][j] -= j * 10;
+
+		auto testSetB = testSetA;
+
+		auto timePointA = clock.now();
+		for (auto& testCase : testSetA)
+			QuickSort(testCase.begin(), testCase.end());
+		auto timePointB = clock.now();
+		for (auto& testCase : testSetB)
+			sort(testCase.begin(), testCase.end());
+		auto timePointC = clock.now();
+
+		std::cout << "\tQuckSort: " << static_cast<float>((timePointB - timePointA).count()) / 1e6f << "ms\n";
+		std::cout << "\tstd::sort: " << static_cast<float>((timePointC - timePointB).count()) / 1e6f << "ms\n";
+		
+		return;
+	}
 };
 
 int main()
@@ -95,15 +132,15 @@ int main()
 
 	for (auto& test : tests)
 	{
-		cout << test->GetName();
+		cout << test->GetName() << " Begins\n";
 		if (!test->Run())
 		{
-			cout << " Failed.\n";
+			cout << test->GetName() << " Failed\n";
 
 		}
 		else
 		{
-			cout << " Passed.\n";
+			cout << test->GetName() << " Passed\n";
 			++passCounter;
 		}
 	}

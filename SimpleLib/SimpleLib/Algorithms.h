@@ -80,7 +80,7 @@ void CountingSort(Iter begin, Iter end, T minVal = 0, T maxVal = 0)
 	for (int i = 1; i < nums.size(); ++i)
 		nums[i] += nums[i - 1];
 
-	for (auto i = begin; i < end; ++i)
+	for (auto i = end - 1; i >= begin; --i)
 		buf[--nums[*i - minVal]] = *i;
 
 	auto d = begin;

@@ -165,6 +165,7 @@ int main()
 	}
 
 	cout << passCounter << "/" << tests.size() << " tests passed.\n";
+	cin.get();
 
 	return 0;
 }

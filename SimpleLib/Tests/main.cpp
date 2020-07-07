@@ -75,6 +75,7 @@ public:
 private:
 	bool FunctionTest()
 	{
+		// InsertionSort & QuickSort
 		auto testCase = this->GenerateRandomNumbers();
 		auto dup1 = testCase;
 		auto dup2 = testCase;
@@ -88,6 +89,20 @@ private:
 
 		for (int i = 0; i < testCase.size(); ++i)
 			if (testCase[i] != dup1[i] || testCase[i] != dup2[i])
+				return false;
+
+		// CountingSort
+		auto testCase2 = this->GenerateRandomNumbers(2000, -8, 8);
+		auto dup21 = testCase2;
+
+		std::sort(testCase2.begin(), testCase2.end());
+		CountingSort<int>(dup21.begin(), dup21.end());
+
+		if (testCase2.size() != dup21.size())
+			return false;
+
+		for (int i = 0; i < testCase2.size(); ++i)
+			if (testCase2[i] != dup21[i])
 				return false;
 
 		return true;

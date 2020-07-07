@@ -81,7 +81,7 @@ private:
 
 		std::sort(testCase.begin(), testCase.end());
 		InsertionSort(dup1.begin(), dup1.end());
-		InsertionSort(dup2.begin(), dup2.end());
+		QuickSort(dup2.begin(), dup2.end());
 
 		if (testCase.size() != dup1.size() || testCase.size() != dup2.size())
 			return false;

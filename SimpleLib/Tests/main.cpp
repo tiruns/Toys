@@ -114,6 +114,9 @@ private:
 		vector<vector<int>> testSetA;
 		for (int i = 0; i < 100; ++i)
 			testSetA.push_back(this->GenerateRandomNumbers(25000, -10000, 10000));
+		for (int i =0; i<20; ++i) // QuickSort() performs badly on these cases
+			testSetA.push_back(this->GenerateRandomNumbers(25000, -10, 10));
+
 		for (int i = 40; i < 70; ++i)
 			for (int j = 0; j < testSetA[i].size(); ++j)
 				testSetA[i][j] += j * 10;
@@ -131,7 +134,7 @@ private:
 			sort(testCase.begin(), testCase.end());
 		auto timePointC = clock.now();
 
-		std::cout << "\tQuckSort: " << static_cast<float>((timePointB - timePointA).count()) / 1e6f << "ms\n";
+		std::cout << "\tQuickSort: " << static_cast<float>((timePointB - timePointA).count()) / 1e6f << "ms\n";
 		std::cout << "\tstd::sort: " << static_cast<float>((timePointC - timePointB).count()) / 1e6f << "ms\n";
 		
 		return;

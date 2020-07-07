@@ -58,12 +58,12 @@ public:
 	}
 };
 
-class QuickSortTest : public BasicTest
+class SortTest : public BasicTest
 {
 public:
 	virtual string GetName() override
 	{
-		return "QuickSortTest";
+		return "SortTest";
 	}
 	virtual bool Run() override
 	{
@@ -76,18 +76,19 @@ private:
 	bool FunctionTest()
 	{
 		auto testCase = this->GenerateRandomNumbers();
-		auto dup = testCase;
-		QuickSort(testCase.begin(), testCase.end());
-		sort(dup.begin(), dup.end());
+		auto dup1 = testCase;
+		auto dup2 = testCase;
 
-		if (testCase.size() != dup.size())
+		std::sort(testCase.begin(), testCase.end());
+		InsertionSort(dup1.begin(), dup1.end());
+		InsertionSort(dup2.begin(), dup2.end());
+
+		if (testCase.size() != dup1.size() || testCase.size() != dup2.size())
 			return false;
 
 		for (int i = 0; i < testCase.size(); ++i)
-		{
-			if (testCase[i] != dup[i])
+			if (testCase[i] != dup1[i] || testCase[i] != dup2[i])
 				return false;
-		}
 
 		return true;
 	}
@@ -126,7 +127,7 @@ int main()
 {
 	vector<unique_ptr<BasicTest>> tests;
 	tests.push_back(make_unique<BinaryHeapTest>());
-	tests.push_back(make_unique<QuickSortTest>());
+	tests.push_back(make_unique<SortTest>());
 
 	int passCounter = 0;
 

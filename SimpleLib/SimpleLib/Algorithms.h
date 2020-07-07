@@ -4,6 +4,27 @@
 #include <random>
 #include <cstdlib>
 
+
+template <class Iter>
+void InsertionSort(Iter begin, Iter end)
+{
+	for (auto i = begin; i < end; ++i)
+	{
+		for (auto j = begin; j < i; ++j)
+		{
+			auto v = *i;
+			if (*j > v)
+			{
+				for (auto u = i; u > j; --u)
+					*u = *(u - 1);
+				*j = v;
+				break;
+			}
+		}
+	}
+	return;
+}
+
 template <class Iter>
 void QuickSort(Iter begin, Iter end)
 {
@@ -14,20 +35,7 @@ void QuickSort(Iter begin, Iter end)
 	{
 		if (end - begin < 8)
 		{
-			for (auto i = begin; i < end; ++i)
-			{
-				for (auto j = begin; j < i; ++j)
-				{
-					auto v = *i;
-					if (*j > v)
-					{
-						for (auto u = i; u > j; --u)
-							*u = *(u - 1);
-						*j = v;
-						break;
-					}
-				}
-			}
+			InsertionSort(begin, end);
 			return;
 		}
 

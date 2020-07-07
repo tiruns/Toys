@@ -12,8 +12,28 @@ void QuickSort(Iter begin, Iter end)
 
 	while (begin < end)
 	{
+		if (end - begin < 8)
+		{
+			for (auto i = begin; i < end; ++i)
+			{
+				for (auto j = begin; j < i; ++j)
+				{
+					auto v = *i;
+					if (*j > v)
+					{
+						for (auto u = i; u > j; --u)
+							*u = *(u - 1);
+						*j = v;
+						break;
+					}
+				}
+			}
+			return;
+		}
+
 		// TODO: a more elegent approach to generate random numbers
 		auto rnd = sUniformSizeTDist(sRandomDevice) % (end - begin);
+
 		std::swap(*(begin + rnd), *(end - 1));
 
 		auto r = end - 1;

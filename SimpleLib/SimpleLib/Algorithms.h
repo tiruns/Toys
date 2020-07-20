@@ -29,7 +29,7 @@ template <class Iter>
 void QuickSort(Iter begin, Iter end)
 {
 	static auto sRandomDevice = std::mt19937_64(std::random_device()());
-	static auto sUniformSizeTDist = std::uniform_int_distribution<size_t>();
+	static auto sUniformSizeTDist = std::uniform_int_distribution<std::size_t>();
 
 	while (begin < end)
 	{
@@ -80,10 +80,47 @@ void CountingSort(Iter begin, Iter end, T minVal = 0, T maxVal = 0)
 	for (int i = 1; i < nums.size(); ++i)
 		nums[i] += nums[i - 1];
 
-	for (auto i = end - 1; i >= begin; --i)
+	for (auto i = end - 1; i > begin; --i)
 		buf[--nums[*i - minVal]] = *i;
+	buf[--nums[*begin - minVal]] = *begin;
 
 	auto d = begin;
 	for (auto i = buf.begin(); i < buf.end(); ++i, ++d)
 		*d = *i;
+}
+
+template <class Iter>
+Iter KthMax(Iter begin, Iter end, std::ptrdiff_t k)
+{
+	static auto sRandomDevice = std::mt19937_64(std::random_device()());
+	static auto sUniformSizeTDist = std::uniform_int_distribution<std::size_t>();
+
+	if (k >= end - begin)
+		return end;
+	k = end - begin - k - 1;
+
+	auto l = begin;
+	auto r = end - 1;
+
+	while (l < r)
+	{
+		auto rnd = sUniformSizeTDist(sRandomDevice) % (r - l);
+		std::swap(*(l + rnd), *(r - 1));
+
+		auto rval = *r;
+		auto w = l;
+		for (auto i = w; i < r; ++i)
+			if (*i < rval)
+				std::swap(*i, *w++);
+		std::swap(*w, *r);
+
+		if ((w - begin) < k)
+			l = w + 1;
+		else if (w - begin > k)
+			r = w - 1;
+		else
+			return w;
+	}
+
+	return l;
 }

@@ -40,7 +40,6 @@ public:
 	virtual bool Run() override
 	{
 		auto testCase = this->GenerateRandomNumbers();
-		//shuffle(testCase.begin(), testCase.end(), mt19937(random_device()()));
 
 		BinaryHeap<int, std::greater<int>> binHeap;
 		for (auto val : testCase)
@@ -69,7 +68,9 @@ public:
 	{
 		if (!this->FunctionTest())
 			return false;
+#ifdef NDEBUG
 		this->PerformanceTest();
+#endif
 		return true;
 	}
 private:
@@ -141,11 +142,36 @@ private:
 	}
 };
 
+class KthMaxTest : public BasicTest
+{
+public:
+	virtual string GetName() override
+	{
+		return "KthMaxTest";
+	}
+
+	virtual bool Run() override
+	{
+		auto testCase = this->GenerateRandomNumbers(30, -500, 500);
+		vector<int> answers;
+		for (int i = 0; i < testCase.size(); ++i)
+		{
+			auto dup = testCase;
+			answers.push_back(*KthMax(dup.begin(), dup.end(), i));
+		}
+
+		sort(testCase.begin(), testCase.end(), [](int l, int r) { return l > r; });
+
+		return testCase == answers;
+	}
+};
+
 int main()
 {
 	vector<unique_ptr<BasicTest>> tests;
 	tests.push_back(make_unique<BinaryHeapTest>());
 	tests.push_back(make_unique<SortTest>());
+	tests.push_back(make_unique<KthMaxTest>());
 
 	int passCounter = 0;
 
@@ -164,8 +190,7 @@ int main()
 		}
 	}
 
-	cout << passCounter << "/" << tests.size() << " tests passed.\n";
-	cin.get();
+	cout << "\n" << passCounter << "/" << tests.size() << " tests passed.\n";
 
 	return 0;
 }

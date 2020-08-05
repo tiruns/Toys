@@ -32,6 +32,6 @@ namespace helpers
 {
 	vector<int> parse_integers(const char* text);
 	vector<string> parse_strings(const char* text);
-	vector<TreeNode> parse_btree(const char* text);
+	vector<TreeNode> parse_binary_tree(const char* text);
 	vector<vector<int>> parse_matrix(const char* text);
 }

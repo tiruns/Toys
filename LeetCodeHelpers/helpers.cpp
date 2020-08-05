@@ -59,7 +59,7 @@ vector<string> helpers::parse_strings(const char* text)
     return r;
 }
 
-vector<TreeNode> helpers::parse_btree(const char* text)
+vector<TreeNode> helpers::parse_binary_tree(const char* text)
 {
     vector<TreeNode> r;
 
@@ -81,20 +81,46 @@ vector<TreeNode> helpers::parse_btree(const char* text)
         }
     }
     
-    if (ns.size() != vs.size())
+    if (ns.size() != vs.size() || ns.size() == 0)
         return r;
 
     for (int i = 0; i < ns.size(); ++i)
-        r.push_back(TreeNode(vs[i]));
-
-    for (int i = 1; i < ns.size(); ++i)
-    {
         if (!ns[i])
+            r.push_back(TreeNode(vs[i]));
+
+    {
+        queue<int> q;
+        q.push(0);
+        int i = 1;
+        int ri = 1;
+
+        while (!q.empty() && i < ns.size())
         {
-            if (i % 2)
-                r[(i - 1) / 2].left = &r[i];
-            else
-                r[(i - 1) / 2].right = &r[i];
+            int c = q.front();
+            q.pop();
+            auto& n = r[c];
+
+            if (i < ns.size())
+            {
+                if (!ns[i])
+                {
+                    q.push(ri);
+                    n.left = &r[ri];
+                    ++ri;
+                }
+                ++i;
+            }
+
+            if (i < ns.size())
+            {
+                if (!ns[i])
+                {
+                    q.push(ri);
+                    n.right = &r[ri];
+                    ++ri;
+                }
+                ++i;
+            }
         }
     }
 

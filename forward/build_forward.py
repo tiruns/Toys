@@ -48,6 +48,8 @@ if __name__=='__main__':
     programPath = sys.argv[1]
     if not os.path.exists(sys.argv[1]):
         raise RuntimeError("Program {} do not exist.".format(programPath))
+    if not os.path.isfile(sys.argv[1]):
+        raise RuntimeError("{} is not a program file.".format(programPath))
 
     command = BuildCommand(programPath)
 

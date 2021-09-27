@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <string>
 #include <memory>
+#include <atomic>
 
 
 #ifndef PROGRAM_PATH
@@ -36,13 +37,26 @@ public:
 };
 #endif // USE_NAMED_MUTEX
 
+
+BOOL WINAPI CtrlHandler(DWORD fdwCtrlType)
+{
+	switch (fdwCtrlType)
+	{
+	case CTRL_C_EVENT:
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
 int wmain(int argc, wchar_t* argv[])
 {
 #ifdef USE_NAMED_MUTEX
 	NamedMutex namedMutex;
 	if (!namedMutex.TreCreate())
 	{
-		printf_s("forward: can not create multiple instances simultaneously.");
+		printf_s("forward: can not create multiple instances simultaneously");
 		return 1;
 	}
 #endif // USE_NAMED_MUTEX
@@ -68,13 +82,14 @@ int wmain(int argc, wchar_t* argv[])
 	if (FALSE == CreateProcessW(PROGRAM_PATH, buffer.get(), NULL,
 		NULL, FALSE, NULL, NULL, NULL, &si, &pi))
 	{
-		printf_s("forward: invalid program at\n");
+		printf_s("forward: invalid program at\n\t");
 		wprintf_s(PROGRAM_PATH);
 		return 1;
 	}
 
+	SetConsoleCtrlHandler(CtrlHandler, TRUE);
 	WaitForSingleObject(pi.hProcess, INFINITE);
-
+	
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
 

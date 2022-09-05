@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "leetcode.h"
 #include <exception>
 
@@ -180,7 +181,8 @@ std::vector<TreeNode> parse_binary_tree(const char* text)
 			++childIter;
 			if (childIter != treeElems.end() && childIter->first)
 				res[parentPos].right = &res[childPos++];
-			++childIter;
+			if (childIter != treeElems.end())
+				++childIter;
 
 			++parentPos;
 		}

@@ -10,6 +10,7 @@ Definitions = [
     r'NDEBUG',
     r'USE_NAMED_MUTEX'
 ]
+
 def AddDefinition(d):
     return r'/D "{}" '.format(d)
 

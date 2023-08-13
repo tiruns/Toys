@@ -96,6 +96,12 @@ public:
 };
 
 template <class CharT>
+class std::formatter<ListNode*, CharT>
+    : public std::formatter<const ListNode*, CharT>
+{
+};
+
+template <class CharT>
 class std::formatter<ListNode, CharT>
     : public details::trivial_fomatter<ListNode, CharT>
 {
@@ -108,7 +114,8 @@ public:
 };
 
 template <class CharT>
-class std::formatter<const TreeNode*, CharT> : public details::trivial_fomatter<const TreeNode*, CharT>
+class std::formatter<const TreeNode*, CharT>
+    : public details::trivial_fomatter<const TreeNode*, CharT>
 {
 public:
     auto format_node(const TreeNode* node, auto it) -> decltype(it)
@@ -138,6 +145,12 @@ public:
         // TODO: format("{} ({}, {})", node->val, node->left, node->right); ?
         return this->format_node(node, context.out());
     }
+};
+
+template <class CharT>
+class std::formatter<TreeNode*, CharT>
+    : public std::formatter<const TreeNode*, CharT>
+{
 };
 
 template <class CharT>

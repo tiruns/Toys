@@ -2,34 +2,33 @@ import os
 import sys
 import subprocess
 
-CompilerPath = r'cl.exe'
-Definitions = [
-    r'UNICODE',
-    r'_UNICODE',
-    r'O2',
-    r'NDEBUG',
-    # r'USE_NAMED_MUTEX'
+CompilerPath = r"cl.exe"
+Definitions = [r"UNICODE", r"_UNICODE", r"NDEBUG", r"_CONSOLE"]
+CompilerFlags = [
+    r"/W3 /sdl /nologo",
+    r"/O2 /Oi /GL",
+    r"/EHsc /MD /GS /Gy",
+    r"/std:c++latest /permissive-",
 ]
 
+
 def AddDefinition(d):
-    return r'/D "{}" '.format(d)
+    return r"/D {} ".format(d)
+
 
 def BuildCommand(programPath):
-    # Input
-    command = r'"{}" .\main.cpp /MD '.format(CompilerPath)
-    # Definitions
+    command = r"{} ./forward.cpp ".format(CompilerPath)
     for d in Definitions:
         command += AddDefinition(d)
-    command += AddDefinition(r'PROGRAM_PATH=LR\"({})\"'.format(programPath))
-    # Output
-    command += r'/Fe: {} '.format(os.path.basename(programPath))
-    # Lib Paths
-    command += r'/link /OPT:REF /OPT:ICF '
-
+    command += AddDefinition(r'"PROGRAM_PATH=LR\"?({})?\""'.format(programPath))
+    for f in CompilerFlags:
+        command += r"{} ".format(f)
+    command += r'/Fe: "{}" '.format(os.path.basename(programPath))
+    command += r"/link"
     return command
 
 
-if __name__=='__main__':
+if __name__ == "__main__":
     if len(sys.argv) < 2:
         raise RuntimeError("Program path not set.")
     programPath = sys.argv[1]
@@ -40,8 +39,8 @@ if __name__=='__main__':
 
     command = BuildCommand(programPath)
 
-    # print(command)
+    print(command)
+    # exit()
     subprocess.run(command)
-    if os.path.exists("main.obj"):
-        os.remove("main.obj")
-    
+    if os.path.exists("forward.obj"):
+        os.remove("forward.obj")  

@@ -8,7 +8,7 @@ Definitions = [
     r'_UNICODE',
     r'O2',
     r'NDEBUG',
-    r'USE_NAMED_MUTEX'
+    # r'USE_NAMED_MUTEX'
 ]
 
 def AddDefinition(d):

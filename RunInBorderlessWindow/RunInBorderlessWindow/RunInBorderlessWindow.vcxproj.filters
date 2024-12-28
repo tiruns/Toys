@@ -3,8 +3,10 @@
   <ItemGroup>
     <ClCompile Include="dxgi_hooks.cpp" />
     <ClCompile Include="d3d11_wrappers.cpp" />
-    <ClCompile Include="dxgi_offsets.cpp" />
+    <ClCompile Include="offsets.cpp" />
     <ClCompile Include="common.cpp" />
+    <ClCompile Include="dinput_wrappers.cpp" />
+    <ClCompile Include="dinput_hooks.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />

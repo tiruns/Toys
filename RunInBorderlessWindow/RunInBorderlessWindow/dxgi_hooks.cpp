@@ -7,9 +7,11 @@
 
 using FnCreateSwapChain = long(IDXGIFactory*, IUnknown*, DXGI_SWAP_CHAIN_DESC*, IDXGISwapChain**);
 using FnSetFullscreenState = long(IDXGISwapChain* This, BOOL Fullscreen, IDXGIOutput* pTarget);
+using FnPresent = long(IDXGISwapChain* This, UINT SyncInterval, UINT Flags);
 
 FnCreateSwapChain* realCreateSwapChain = nullptr;
 FnSetFullscreenState* realSetFullscreenState = nullptr;
+FnPresent* realPresent = nullptr;
 
 void* GetMemeberFunctionAddress(void* instance, ptrdiff_t offset)
 {
@@ -23,14 +25,22 @@ HRESULT FakeSetFullscreenState(IDXGISwapChain* This, BOOL Fullscreen, IDXGIOutpu
     return realSetFullscreenState(This, FALSE, pTarget);
 }
 
+HRESULT FakePresent(IDXGISwapChain* This, UINT SyncInterval, UINT Flags)
+{
+    return realPresent(This, SyncInterval, Flags);
+}
+
 void HookSwapChain(IDXGISwapChain* swapChain)
 {
     realSetFullscreenState = (FnSetFullscreenState*)GetMemeberFunctionAddress(
         swapChain, Constants::IDXGISwapChain_SetFullscreenState_Offset);
+    realPresent = (FnPresent*)GetMemeberFunctionAddress(
+        swapChain, Constants::IDXGISwapChain_Present_Offset);
 
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
     DetourAttach((void**)&realSetFullscreenState, FakeSetFullscreenState);
+    DetourAttach((void**)&realPresent, FakePresent);
     Ensure(NO_ERROR == DetourTransactionCommit());
 }
 
@@ -47,6 +57,7 @@ void TryHookSwapChain(IDXGISwapChain* swapChain)
 HRESULT FakeCreateSwapChain(IDXGIFactory* This, IUnknown* pDevice, DXGI_SWAP_CHAIN_DESC* pDesc, IDXGISwapChain** ppSwapChain)
 {
     pDesc->Windowed = TRUE;
+    pDesc->SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
     const LONG_PTR windowStyle = WS_VISIBLE | WS_POPUP;
     Ensure(0 != SetWindowLongPtrW(pDesc->OutputWindow, GWL_STYLE, windowStyle));

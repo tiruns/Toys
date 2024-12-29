@@ -52,8 +52,9 @@ void TryHookSwapChain(IDXGISwapChain* swapChain)
 void SetupBorderlessWindow(HWND hWnd)
 {
     const LONG_PTR windowStyle = WS_VISIBLE | WS_POPUP;
-    Ensure(0 != SetWindowLongPtrW(hWnd, GWL_STYLE, windowStyle));
-    Ensure(0 != SetWindowLongPtrW(hWnd, GWL_EXSTYLE, 0));
+    SetLastError(0);
+    Ensure(SetWindowLongPtrW(hWnd, GWL_STYLE, windowStyle) != 0 || GetLastError() == 0);
+    Ensure(SetWindowLongPtrW(hWnd, GWL_EXSTYLE, 0) != 0 || GetLastError() == 0);
 
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);

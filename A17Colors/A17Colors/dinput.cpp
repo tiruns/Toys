@@ -66,6 +66,111 @@ bool IsA17Process()
     return s.ends_with("Atelier_Sophie_DX.exe");
 }
 
+void FixA19Colors()
+{
+    std::byte* baseAddresss = reinterpret_cast<std::byte*>(0x140FBE000ull);
+    const int numColors = 5;
+
+    // ingredient colors
+    {
+        uint32_t* targetAddress = reinterpret_cast<uint32_t*>(baseAddresss + 0x4068ull);
+
+        const uint32_t originalColors[] = {
+            0xFF5656C8, // R
+            0xFF915014, // B
+            0xFF15853F, // G
+            0xFF0FA9D2, // Y
+            0xFFD94B87  // P
+        };
+
+        const uint32_t newColors[] = {
+            0xFF0000A0, // R
+            0xFFC00000, // B
+            0xFF00C000, // G
+            0xFF00F0F0, // Y
+            0xFFC000C0  // P
+        };
+
+        for (int i = 0; i < numColors; ++i)
+        {
+            uint32_t* colorAddress = targetAddress + i;
+            uint32_t& color = *colorAddress;
+            Ensure(color == originalColors[i]);
+            color = newColors[i];
+        }
+    }
+
+    // indicator/border colors
+    {
+        uint32_t* targetAddress1 = reinterpret_cast<uint32_t*>(baseAddresss + 0x4080ull);
+        uint32_t* targetAddress2 = reinterpret_cast<uint32_t*>(baseAddresss + 0x4098ull);
+
+        const uint32_t originalColors[] = {
+            0xFF0032C8, // R
+            0xFF6E5515, // B
+            0xFF007D3B, // G
+            0xFF007FBC, // Y
+            0xFFC80064  // P
+        };
+
+        const uint32_t newColors[] = {
+            0xFF0000A0, // R
+            0xFFC00000, // B
+            0xFF00C000, // G
+            0xFF00F0F0, // Y
+            0xFFC000C0  // P
+        };
+
+        for (auto targetAddress : {targetAddress1, targetAddress2})
+        {
+            for (int i = 0; i < numColors; ++i)
+            {
+                uint32_t* colorAddress = targetAddress + i;
+                uint32_t& color = *colorAddress;
+                Ensure(color == originalColors[i]);
+                color = newColors[i];
+            }
+        }
+    }
+
+    // background colors
+    {
+        uint32_t* targetAddress = reinterpret_cast<uint32_t*>(baseAddresss + 0x40E0ull);
+
+        const uint32_t originalColors[] = {
+            0xC03723AF, // R
+            0xC08C4B14, // B
+            0xC0237300, // G
+            0xC03CAAB4, // Y
+            0xC0A50A6E  // P
+        };
+
+        const uint32_t newColors[] = {
+            0xC00000A0, // R
+            0xC0C00000, // B
+            0xC000C000, // G
+            0xC000F0F0, // Y
+            0xC0C000C0  // P
+        };
+
+        for (int i = 0; i < numColors; ++i)
+        {
+            uint32_t* colorAddress = targetAddress + i;
+            uint32_t& color = *colorAddress;
+            Ensure(color == originalColors[i]);
+            color = newColors[i];
+        }
+    }
+}
+
+bool IsA19Process()
+{
+    char buf[1024]{};
+    Ensure(GetModuleFileNameA(NULL, buf, 1024) != 0);
+    std::string s = buf;
+    return s.ends_with("Atelier_Lydie_and_Suelle_DX.exe");
+}
+
 extern "C" __declspec(dllexport)
 HRESULT WINAPI DirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID* ppvOut, LPUNKNOWN punkOuter)
 {
@@ -73,12 +178,14 @@ HRESULT WINAPI DirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidl
     auto fn = (FnType*)GetDinputFunction("DirectInput8Create");
     HRESULT hr = fn(hinst, dwVersion, riidltf, ppvOut, punkOuter);
 
-    static bool isA17ColorFixed = false;
-    if (!isA17ColorFixed)
+    static bool isColorFixed = false;
+    if (!isColorFixed)
     {
-        isA17ColorFixed = true;
+        isColorFixed = true;
         if (IsA17Process())
             FixA17Colors();
+        if (IsA19Process())
+            FixA19Colors();
     }
 
     return hr;

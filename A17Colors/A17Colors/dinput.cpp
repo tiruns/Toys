@@ -68,8 +68,26 @@ bool IsA17Process()
 
 void FixA19Colors()
 {
+    auto replaceColors = [](const uint32_t* originalColors, const uint32_t* newColors, int numColors, uint32_t* targetAddress) {
+        for (int i = 0; i < numColors; ++i)
+        {
+            uint32_t* colorAddress = targetAddress + i;
+            uint32_t& color = *colorAddress;
+            Ensure(color == originalColors[i]);
+            color = newColors[i];
+        }
+    };
+
     std::byte* baseAddresss = reinterpret_cast<std::byte*>(0x140FBE000ull);
     const int numColors = 5;
+
+    const uint32_t newColors[] = {
+        0xFF0000A0, // R
+        0xFFC01010, // B
+        0xFF00C000, // G
+        0xFF00E0E0, // Y
+        0xFFA000C0  // P
+    };
 
     // ingredient colors
     {
@@ -83,27 +101,12 @@ void FixA19Colors()
             0xFFD94B87  // P
         };
 
-        const uint32_t newColors[] = {
-            0xFF0000A0, // R
-            0xFFC00000, // B
-            0xFF00C000, // G
-            0xFF00F0F0, // Y
-            0xFFC000C0  // P
-        };
-
-        for (int i = 0; i < numColors; ++i)
-        {
-            uint32_t* colorAddress = targetAddress + i;
-            uint32_t& color = *colorAddress;
-            Ensure(color == originalColors[i]);
-            color = newColors[i];
-        }
+        replaceColors(originalColors, newColors, numColors, targetAddress);
     }
 
-    // indicator/border colors
+    // indicator colors
     {
-        uint32_t* targetAddress1 = reinterpret_cast<uint32_t*>(baseAddresss + 0x4080ull);
-        uint32_t* targetAddress2 = reinterpret_cast<uint32_t*>(baseAddresss + 0x4098ull);
+        uint32_t* targetAddress = reinterpret_cast<uint32_t*>(baseAddresss + 0x4098ull);
 
         const uint32_t originalColors[] = {
             0xFF0032C8, // R
@@ -113,24 +116,23 @@ void FixA19Colors()
             0xFFC80064  // P
         };
 
-        const uint32_t newColors[] = {
-            0xFF0000A0, // R
-            0xFFC00000, // B
-            0xFF00C000, // G
-            0xFF00F0F0, // Y
-            0xFFC000C0  // P
+        replaceColors(originalColors, newColors, numColors, targetAddress);
+    }
+
+
+    // border colors
+    {
+        uint32_t* targetAddress = reinterpret_cast<uint32_t*>(baseAddresss + 0x40C8ull);
+
+        const uint32_t originalColors[] = {
+            0xFF0032C8, // R
+            0xFF825014, // B
+            0xFF007D3B, // G
+            0xFF007FBC, // Y
+            0xFFC72E88  // P
         };
 
-        for (auto targetAddress : {targetAddress1, targetAddress2})
-        {
-            for (int i = 0; i < numColors; ++i)
-            {
-                uint32_t* colorAddress = targetAddress + i;
-                uint32_t& color = *colorAddress;
-                Ensure(color == originalColors[i]);
-                color = newColors[i];
-            }
-        }
+        replaceColors(originalColors, newColors, numColors, targetAddress);
     }
 
     // background colors
@@ -145,21 +147,7 @@ void FixA19Colors()
             0xC0A50A6E  // P
         };
 
-        const uint32_t newColors[] = {
-            0xC00000A0, // R
-            0xC0C00000, // B
-            0xC000C000, // G
-            0xC000F0F0, // Y
-            0xC0C000C0  // P
-        };
-
-        for (int i = 0; i < numColors; ++i)
-        {
-            uint32_t* colorAddress = targetAddress + i;
-            uint32_t& color = *colorAddress;
-            Ensure(color == originalColors[i]);
-            color = newColors[i];
-        }
+        replaceColors(originalColors, newColors, numColors, targetAddress);
     }
 }
 
@@ -190,3 +178,19 @@ HRESULT WINAPI DirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidl
 
     return hr;
 }
+
+
+#if 0
+
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+{
+    switch (fdwReason)
+    {
+    case DLL_PROCESS_ATTACH:
+        LoadLibrary(LR"(C:\Program Files\RenderDoc\renderdoc.dll)");
+        break;
+    }
+    return TRUE;
+}
+
+#endif
